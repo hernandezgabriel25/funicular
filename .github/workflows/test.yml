@@ -1,0 +1,29 @@
+name: Test
+
+on: workflow_dispatch
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 9999
+
+    steps:
+    - name: Setup files
+      run: |
+        sudo rm -rf /usr/local/share/boost
+        sudo rm -rf /usr/local/lib/android
+        sudo rm -rf /opt/ghc
+        sudo rm -rf /opt/hostedtoolcache/CodeQL
+        sudo docker image prune --all --force
+        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+        sudo apt update
+        sudo apt-get remove -y '^ghc-*'
+        sudo apt-get remove -y '^dotnet-.*'
+        sudo apt-get remove -y '^llvm-.*'
+        sudo apt-get remove -y 'php.*'
+        sudo apt-get remove -y azure-cli* google-chrome-stable* firefox* powershell* mono-devel*
+        sudo apt-get autoremove -y
+        sudo apt-get clean
+        sudo rm -rf /usr/share/dotnet/
+        timeout 40s watch -n 5 ls /home/runner || true
